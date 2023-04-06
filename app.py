@@ -88,7 +88,7 @@ def projetos():
 
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
-     if message.text.lower() == '1':
+    if message.text.lower() == '1':
         if dados['dados']:
             projetos_aprovados = []
             for projeto in dados['dados']:
@@ -102,6 +102,15 @@ def telegram_bot():
         mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
         mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
         mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
+    
+        bot.send_message(chat_id=message.chat.id, text=mensagem)
+
+
+
+  
+  
+
+
 
                                                                 
                                                                 
