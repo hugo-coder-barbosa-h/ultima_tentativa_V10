@@ -64,6 +64,9 @@ def dedoduro2():
   sheet.append_row(["HUGO", "HENUD", "a partir do Flask"])
   return "Planilha escrita!"
 
+def send_message(chat_id, text):
+    bot.send_message(chat_id=chat_id, text=text)
+
 
 def get_projects():
     hoje = date.today().strftime('%Y-%m-%d')
