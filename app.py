@@ -64,54 +64,44 @@ def dedoduro2():
   sheet.append_row(["HUGO", "HENUD", "a partir do Flask"])
   return "Planilha escrita!"
 
-def send_message(chat_id, text):
-    bot.send_message(chat_id=chat_id, text=text)
-
-
-def get_projects():
+@app.route("/projetos_aprovados")
+def projetos():
     hoje = date.today().strftime('%Y-%m-%d')
     ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
     url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
     response = requests.get(url)
     dados = response.json()
+
     projetos_aprovados = []
     projetos_dict = []
     df = pd.DataFrame(columns=['ID', 'Tipo', 'Número', 'Ementa'])
     for projeto in dados['dados']:
         projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
         projetos_dict.append({'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']})
-    if dados['dados']:
-        for i, projeto in enumerate(projetos_dict):
-            row = [i+2, projeto['Tipo'], projeto['Número'], projeto['Ementa']]
-            sheet.append_row(row)
-    return projetos_aprovados
 
-# Rota do webhook do Telegram
+    if dados['dados']:
+        for projeto in dados['dados']:
+            projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+            df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']}, ignore_index=True)
+
+    return df.to_html()
+
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
-    # Obter a mensagem enviada pelo usuário
-    mensagem = request.get_json()
-    chat_id = mensagem["message"]["chat"]["id"]
-    text = mensagem["message"]["text"]
-
-    if text.lower() == '1':
-        # Obter os projetos de lei aprovados
-        projetos_aprovados = get_projects()
-
-        if projetos_aprovados:
-            # Enviar a lista de projetos de lei para o usuário
-            send_message(chat_id, "Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
+     if message.text.lower() == '1':
+        if dados['dados']:
+            projetos_aprovados = []
+            for projeto in dados['dados']:
+                projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+            bot.send_message(chat_id=message.chat.id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
         else:
-            send_message(chat_id, "Não foram encontrados projetos de lei aprovados nos últimos dois dias.")
-    elif text.lower() == '2':
-        # Enviar o link para o site da Câmara dos Deputados
-        bot.send_message(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
+            bot.send_message(chat_id=message.chat.id, text="Nenhum projeto de lei foi aprovado recentemente.")
+    elif message.text.lower() == '2':
+        bot.send_message(chat_id=message.chat.id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
     else:
-      mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
-      mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
-      mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
-      return {"ok": True}
-      
+        mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
+        mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
+        mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
 
                                                                 
                                                                 
