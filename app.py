@@ -65,3 +65,21 @@ def dedoduro2():
   return "Planilha escrita!"
 
 
+@app.route("/projetos_aprovados")
+def projetos_aprovados():
+    hoje = date.today().strftime('%Y-%m-%d')
+    ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+    url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
+    response = requests.get(url)
+    dados = response.json()
+    projetos_aprovados = []
+    projetos_dict = []
+    df = pd.DataFrame(columns=['ID', 'Tipo', 'Número', 'Ementa'])
+    for projeto in dados['dados']:
+       projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+       projetos_dict.append({'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']})
+    if dados['dados']:
+       for projeto in dados['dados']:
+           projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+           df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo
+  return menu + "Olá, este é o site do robô sobre PLs aprovadas."
