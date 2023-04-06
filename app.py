@@ -19,8 +19,8 @@ sheet = planilha.worksheet("Página1")
 
 app = Flask(__name__)
 
-menu = """
-<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> | <a href="/contato">Contato</a> | <a href="/promocoes">PROMOÇÕES</a> 
+menu = """ 
+<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> | <a href="/contato">Contato</a> | <a href="/promocoes">PROMOÇÕES</a> | <a href="/projetos_aprovados">PROJETOS_APROVADOS</a> 
 <br>
 """
 
@@ -82,4 +82,6 @@ def projetos_aprovados():
        for projeto in dados['dados']:
            projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
            df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo
-  return menu + "Olá, este é o site do robô sobre PLs aprovadas."
+  return menu + "Olá, essa é a lista de PLs aprovadas."
+                                                                
+                                                                
