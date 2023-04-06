@@ -1,7 +1,7 @@
 import os
 
 
-from flask import Flask
+from flask import Flask, request
 from tchan import ChannelScraper
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -20,7 +20,7 @@ sheet = planilha.worksheet("Página1")
 app = Flask(__name__)
 
 menu = """ 
-<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> | <a href="/contato">Contato</a> | <a href="/promocoes">PROMOÇÕES</a> | <a href="/projetos_aprovados">PROJETOS_APROVADOS</a> 
+<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> | <a href="/contato">Contato</a> | <a href="/promocoes">PROMOÇÕES</a>  
 <br>
 """
 
@@ -64,24 +64,21 @@ def dedoduro2():
   sheet.append_row(["HUGO", "HENUD", "a partir do Flask"])
   return "Planilha escrita!"
 
+@app.route("/telegram-bot", methods=["POST"])
+def telegram_bot():
+  update = request.json
+  chat_id = update["message"]["chat"]["id"]
+  message = update["message"]["text"]
+  nova_mensagem = {
+    "chat_id": chat_id,
+    "text": f"Você enviou a mensagem: <b>{message}</b>",
+    "parse_mode": "HTML",
+  }
+  resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+  print(resposta.text)
+  return "ok"
 
-@app.route("/projetos_aprovados")
-def projetos_aprovados():
-    hoje = date.today().strftime('%Y-%m-%d')
-    ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-    url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
-    response = requests.get(url)
-    dados = response.json()
-    projetos_aprovados = []
-    projetos_dict = []
-    df = pd.DataFrame(columns=['ID', 'Tipo', 'Número', 'Ementa'])
-    for projeto in dados['dados']:
-       projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-       projetos_dict.append({'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']})
-    if dados['dados']:
-       for projeto in dados['dados']:
-           projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-           df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo
-  return menu + "Olá, essa é a lista de PLs aprovadas."
+
+
                                                                 
                                                                 
