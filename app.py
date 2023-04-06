@@ -1,4 +1,6 @@
 from flask import Flask
+from tchan import ChannelScraper
+
 
 app = Flask(__name__)
 
