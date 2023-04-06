@@ -3,8 +3,8 @@ from flask import Flask
 app = Flask(__name__)
 
 @app.route("/")
-def hello_world():
-   return "Olá, mundo!"
+def index():
+  return menu + "Olá, mundo! Esse é meu site. (Álvaro Justen)"
 
 @app.route("/sobre")
 def sobre():
