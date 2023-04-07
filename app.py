@@ -97,24 +97,19 @@ def telegram_bot():
             projetos_aprovados = []
             for projeto in dados['dados']:
                 projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-            bot.send_message(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
+            bot.reply_text(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
         else:
-            bot.send_message(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
+            bot.reply_text(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
     elif message.lower() == '2':
-        bot.send_message(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
+        bot.reply_text(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
     else:
         mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
         mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
         mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
-        bot.send_message(chat_id=chat_id, text=mensagem)
+        bot.reply_text(chat_id=chat_id, text=mensagem)
 
     return "ok"
 
-if __name__ == '__main__':
-    # Configuração do webhook
-    WEBHOOK_URL = f"https://{os.environ['https://site-teste-hugoh.onrender.com']}/telegram-bot"
-    bot.setWebhook(url=https://site-teste-hugoh.onrender.com)
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
       
 
