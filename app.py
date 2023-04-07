@@ -93,9 +93,10 @@ def telegram_bot():
     
     if message.lower() == '1':
         # code to display a list of projects approved in the last day
+        projetos = projetos_aprovados()
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Projetos de Lei aprovados na Câmara dos Deputados:\n" + "\n".join(projetos_aprovados),
+            "text": "Projetos de Lei aprovados na Câmara dos Deputados:\n" + "\n".join(projetos),
         }
     elif message.lower() == '2':
         # code to display a link to the Chamber of Deputies website
@@ -125,6 +126,7 @@ def telegram_bot():
     resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
     print(resposta.text)
     return "ok"
+
 
 
 
