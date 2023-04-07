@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request ,render_template
 from tchan import ChannelScraper
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
