@@ -68,24 +68,29 @@ def dedoduro2():
   sheet.append_row(["HUGO", "H", "a partir do Flask"])
   return "Planilha escrita!"
 
-@app.route('/projetos_aprovados')
-def projetos_aprovados():
+@app.route("/projetosaprovados")
+def projetos():
     hoje = date.today().strftime('%Y-%m-%d')
     ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
     url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
     response = requests.get(url)
+    
     if response.status_code == 200:
-        dados = response.json()
+        dados = response.json()['dados']
         projetos_aprovados = []
-        projetos_dict = []
-        df = pd.DataFrame(columns=['ID', 'Tipo', 'Número', 'Ementa'])
-        if dados['dados']:
-            for projeto in dados['dados']:
-                projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-                df.loc[len(df)] = [projeto['id'], projeto['siglaTipo'], projeto['numero'], projeto['ementa']]
-        return render_template('projetos.html', projetos=df.to_html())
+        
+        for projeto in dados:
+            tipo = projeto['siglaTipo']
+            numero = projeto['numero']
+            ementa = projeto['ementa']
+            projetos_aprovados.append(f"{tipo} {numero} - {ementa}")
+            
+        return '<br>'.join(projetos_aprovados)
     else:
-        return f"Error: {response.status_code}"
+        return f"Erro: {response.status_code}"
+
+if __name__ == "__main__":
+    app.run()
       
 
 @app.route("/telegram-bot", methods=["POST"])
