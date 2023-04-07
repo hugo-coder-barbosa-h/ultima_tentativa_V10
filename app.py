@@ -95,13 +95,21 @@ def telegram_bot():
     chat_id = update.message.chat_id
 
     if message.lower() == '1':
-        if dados['dados']:
-            projetos_aprovados = []
-            for projeto in dados['dados']:
-                projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-            bot.reply_text(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
+        hoje = date.today().strftime('%Y-%m-%d')
+        ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+        url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
+        response = requests.get(url)
+        if response.status_code == 200:
+            dados = response.json()
+            if dados['dados']:
+                projetos_aprovados = []
+                for projeto in dados['dados']:
+                    projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+                bot.reply_text(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
+            else:
+                bot.reply_text(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
         else:
-            bot.reply_text(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
+            bot.reply_text(chat_id=chat_id, text=f"Erro ao acessar a API da Câmara dos Deputados. Status code: {response.status_code}")
     elif message.lower() == '2':
         bot.reply_text(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
     else:
