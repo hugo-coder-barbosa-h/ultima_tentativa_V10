@@ -82,6 +82,31 @@ def projetos():
         return df.to_html() # return a HTML representation of the dataframe
     else:
         return f"Error: {response.status_code}" # return an error message if the response was not successful
+      
+      
+      
+@app.route("/telegram-bot", methods=["POST"])
+def telegram_bot():
+    if request.method == "POST":
+        message = request.get_json()["message"]
+        if message.text.lower() == '1':
+            if dados['dados']:
+                projetos_aprovados = []
+                for projeto in dados['dados']:
+                    projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
+                bot.send_message(chat_id=message.chat.id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
+            else:
+                bot.send_message(chat_id=message.chat.id, text="Nenhum projeto de lei foi aprovado recentemente.")
+        elif message.text.lower() == '2':
+            bot.send_message(chat_id=message.chat.id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
+        else:
+            mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
+            mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
+            mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
+            bot.send_message(chat_id=message.chat.id, text=mensagem)
+    return "ok"
+
+      
 
 
   
