@@ -84,20 +84,6 @@ def projetos_aprovados():
     else:
         return f"Error: {response.status_code}"
       
-  
-@app.route("/telegram-bot", methods=["POST"])
-def telegram_bot():
-  update = request.json
-  chat_id = update["message"]["chat"]["id"]
-  message = update["message"]["text"]
-  nova_mensagem = {
-    "chat_id": chat_id,
-    "text": f"Você enviou a mensagem: <b>{message}</b>",
-    "parse_mode": "HTML",
-  }
-  resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
-  print(resposta.text)
-  return "ok"
 
 
 @app.route("/telegram-bot", methods=["POST"])
