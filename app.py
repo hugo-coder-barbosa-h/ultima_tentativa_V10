@@ -64,51 +64,19 @@ def dedoduro2():
   sheet.append_row(["HUGO", "HENUD", "a partir do Flask"])
   return "Planilha escrita!"
 
-@app.route("/projetosaprovados")
-def projetos():
-    hoje = date.today().strftime('%Y-%m-%d')
-    ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-    url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
-    response = requests.get(url)
-    if response.status_code == 200:
-        dados = response.json()
-        projetos_aprovados = []
-        projetos_dict = []
-        df = pd.DataFrame(columns=['ID', 'Tipo', 'Número', 'Ementa'])
-        if dados['dados']:
-            for projeto in dados['dados']:
-                projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-                df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']}, ignore_index=True)
-        return df.to_html() # return a HTML representation of the dataframe
-    else:
-        return f"Error: {response.status_code}" # return an error message if the response was not successful
-          
-
-----
-
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    message = update.message.text
-    chat_id = update.message.chat_id
-
-    if message.lower() == '1':
-        if dados['dados']:
-            projetos_aprovados = []
-            for projeto in dados['dados']:
-                projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-            bot.reply_text(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
-        else:
-            bot.reply_text(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
-    elif message.lower() == '2':
-        bot.reply_text(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
-    else:
-        mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
-        mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
-        mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
-        bot.reply_text(chat_id=chat_id, text=mensagem)
-
-    return "ok"
+  update = request.json
+  chat_id = update["message"]["chat"]["id"]
+  message = update["message"]["text"]
+  nova_mensagem = {
+    "chat_id": chat_id,
+    "text": f"Você enviou a mensagem: <b>{message}</b>",
+    "parse_mode": "HTML",
+  }
+  resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+  print(resposta.text)
+  return "ok"
 
 
       
