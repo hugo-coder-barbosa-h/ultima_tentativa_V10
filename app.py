@@ -7,6 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import requests
 
 TELEGRAM_API_KEY = os.environ["TELEGRAM_API_KEY"]
+bot = telegram.Bot(token=os.environ["TELEGRAM_API_KEY"])
 TELEGRAM_ADMIN_ID = os.environ["TELEGRAM_ADMIN_ID"]
 GOOGLE_SHEETS_CREDENTIALS = os.environ["GOOGLE_SHEETS_CREDENTIALS"]
 with open("credenciais.json", mode="w") as arquivo:
