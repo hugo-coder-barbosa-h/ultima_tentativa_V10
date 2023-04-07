@@ -1,6 +1,5 @@
 import os
 
-
 from flask import Flask, request
 from tchan import ChannelScraper
 import gspread
@@ -82,12 +81,8 @@ def projetos_aprovados():
         return render_template('projetos.html', projetos=df.to_html())
     else:
         return f"Error: {response.status_code}"
-
-
-app = Flask(__name__)
-bot = telegram.Bot(token=os.environ["TELEGRAM_API_KEY"])     
+  
       
-
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
     update = telegram.Update.de_json(request.get_json(force=True), bot)
