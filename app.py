@@ -82,7 +82,7 @@ def projetos_aprovados():
         if dados['dados']:
             for projeto in dados['dados']:
                 projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-                df = df.append({'ID': projeto['id'], 'Tipo': projeto['siglaTipo'], 'Número': projeto['numero'], 'Ementa': projeto['ementa']}, ignore_index=True)
+                df.loc[len(df)] = [projeto['id'], projeto['siglaTipo'], projeto['numero'], projeto['ementa']]
         return render_template('projetos.html', projetos=df.to_html())
     else:
         return f"Error: {response.status_code}"
