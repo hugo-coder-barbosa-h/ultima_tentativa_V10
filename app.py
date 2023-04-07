@@ -85,32 +85,41 @@ def projetos_aprovados():
         return f"Error: {response.status_code}"
       
 
-
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
     update = request.json
     chat_id = update["message"]["chat"]["id"]
     message = update["message"]["text"]
-
+    
     if message.lower() == '1':
+        # code to display a list of projects approved in the last day
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Opção 1 selecionada.",
+            "text": "Projetos de Lei aprovados na Câmara dos Deputados:\n" + "\n".join(projetos_aprovados),
         }
     elif message.lower() == '2':
+        # code to display a link to the Chamber of Deputies website
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Opção 2 selecionada.",
+            "text": "Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/",
         }
     elif message.lower() == '3':
+        # code to display a greeting message
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Opção 3 selecionada.",
+            "text": "Olá! Em que posso ajudar?",
+        }
+    elif message.lower() == '4':
+        # code to display a farewell message
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "Obrigado por usar nosso bot! Até a próxima!",
         }
     else:
+        # default message if no valid option is chosen
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Olá! Por favor, escolha uma das opções abaixo:\n1. Opção 1\n2. Opção 2\n3. Opção 3",
+            "text": "Escolha uma das opções abaixo:\n1. Ver projetos de lei aprovados\n2. Acessar o site da Câmara dos Deputados\n3. Saudação\n4. Despedida",
         }
     
     resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
