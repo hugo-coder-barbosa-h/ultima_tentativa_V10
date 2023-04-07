@@ -5,6 +5,7 @@ from tchan import ChannelScraper
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
+from datetime import date, timedelta
 
 TELEGRAM_API_KEY = os.environ["TELEGRAM_API_KEY"]
 bot = telegram.Bot(token=os.environ["TELEGRAM_API_KEY"])
@@ -82,38 +83,52 @@ def projetos_aprovados():
         return render_template('projetos.html', projetos=df.to_html())
     else:
         return f"Error: {response.status_code}"
-  
       
+  
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    message = update.message.text
-    chat_id = update.message.chat_id
+  update = request.json
+  chat_id = update["message"]["chat"]["id"]
+  message = update["message"]["text"]
+  nova_mensagem = {
+    "chat_id": chat_id,
+    "text": f"Você enviou a mensagem: <b>{message}</b>",
+    "parse_mode": "HTML",
+  }
+  resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+  print(resposta.text)
+  return "ok"
+
+
+@app.route("/telegram-bot", methods=["POST"])
+def telegram_bot():
+    update = request.json
+    chat_id = update["message"]["chat"]["id"]
+    message = update["message"]["text"]
 
     if message.lower() == '1':
-        hoje = date.today().strftime('%Y-%m-%d')
-        ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-        url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
-        response = requests.get(url)
-        if response.status_code == 200:
-            dados = response.json()
-            if dados['dados']:
-                projetos_aprovados = []
-                for projeto in dados['dados']:
-                    projetos_aprovados.append(f"{projeto['siglaTipo']} {projeto['numero']} - {projeto['ementa']}")
-                bot.reply_text(chat_id=chat_id, text="Projetos de Lei aprovados:\n" + "\n".join(projetos_aprovados))
-            else:
-                bot.reply_text(chat_id=chat_id, text="Nenhum projeto de lei foi aprovado recentemente.")
-        else:
-            bot.reply_text(chat_id=chat_id, text=f"Erro ao acessar a API da Câmara dos Deputados. Status code: {response.status_code}")
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "Opção 1 selecionada.",
+        }
     elif message.lower() == '2':
-        bot.reply_text(chat_id=chat_id, text="Acesse o site da Câmara dos Deputados para mais detalhes: https://www.camara.leg.br/busca-portal/projetoslegislativos/")
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "Opção 2 selecionada.",
+        }
+    elif message.lower() == '3':
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "Opção 3 selecionada.",
+        }
     else:
-        mensagem = "Olá, aqui você tem acesso aos Projetos de Lei aprovados na Câmara dos Deputados. Escolha uma das opções abaixo:\n"
-        mensagem += "1. Gostaria de ver o nome dos projetos de lei\n"
-        mensagem += "2. Gostaria de acessar o site da Câmara dos Deputados para mais detalhes?\n"
-        bot.reply_text(chat_id=chat_id, text=mensagem)
-
+        nova_mensagem = {
+            "chat_id": chat_id,
+            "text": "Olá! Por favor, escolha uma das opções abaixo:\n1. Opção 1\n2. Opção 2\n3. Opção 3",
+        }
+    
+    resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
+    print(resposta.text)
     return "ok"
 
 
