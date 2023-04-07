@@ -70,12 +70,32 @@ def dedoduro2():
 
       
 
+def projetos_aprovados():
+    hoje = date.today().strftime('%Y-%m-%d')
+    ontem = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+    url = f"https://dadosabertos.camara.leg.br/api/v2/proposicoes?dataInicio={ontem}&dataFim={hoje}&siglaTipo=PL&ordenarPor=ano"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        dados = response.json()['dados']
+        projetos_aprovados = []
+        
+        for projeto in dados:
+            tipo = projeto['siglaTipo']
+            numero = projeto['numero']
+            ementa = projeto['ementa']
+            projetos_aprovados.append(f"{tipo} {numero} - {ementa}")
+            
+        return projetos_aprovados
+    else:
+        return f"Erro: {response.status_code}"
+      
 @app.route("/telegram-bot", methods=["POST"])
 def telegram_bot():
     update = request.json
     chat_id = update["message"]["chat"]["id"]
     message = update["message"]["text"]
-    
+
     if message.lower() == '1':
         # code to display a list of projects approved in the last day
         projetos = projetos_aprovados()
@@ -107,10 +127,13 @@ def telegram_bot():
             "chat_id": chat_id,
             "text": "Escolha uma das opções abaixo:\n1. Ver projetos de lei aprovados\n2. Acessar o site da Câmara dos Deputados\n3. Saudação\n4. Despedida",
         }
-    
+
     resposta = requests.post(f"https://api.telegram.org./bot{TELEGRAM_API_KEY}/sendMessage", data=nova_mensagem)
     print(resposta.text)
-    return "ok"
+    return "ok"      
+      
+      
+      
 
 
 
