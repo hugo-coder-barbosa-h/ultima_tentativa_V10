@@ -40,7 +40,7 @@ def sobre():
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
-    # Atualiza os projetos de lei aprovados
+    # Atualiza os projetos de lei aprovados no site
     projetos = projetos_aprovados()
     # Atualiza a página inicial com os novos projetos aprovados
     return index()
@@ -130,7 +130,7 @@ def telegram_bot():
     elif message.lower() == '2':
         nova_mensagem = {
             "chat_id": chat_id,
-            "text": "Acesse o site do nosso bot para mais detalhes: https://site-versao-11.onrender.com",
+            "text": "Acesse o site do nosso bot e veja as Pls aprovadas no dia de hoje: https://site-teste-hugoh.onrender.com",
         }
     elif message.lower() == '3':
         nova_mensagem = {
