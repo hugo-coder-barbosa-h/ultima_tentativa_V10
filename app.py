@@ -24,7 +24,7 @@ sheet = planilha.worksheet("Página1")
 app = Flask(__name__)
 
 menu = """ 
-<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> | <a href="/contato">Contato</a> | <a href="/promocoes">PROMOÇÕES</a>  
+<a href="/">Página inicial</a> | <a href="/sobre">Sobre</a> |
 <br>
 """
 
@@ -92,7 +92,7 @@ def projetos_aprovados():
             ementa = projeto['ementa']
             projetos_aprovados.append(f"{tipo} {numero} - {ementa}")
             
-        # Autenticação com as credenciais do Google Sheets
+        #  credenciais do Google Sheets
         GOOGLE_SHEETS_CREDENTIALS = os.environ["GOOGLE_SHEETS_CREDENTIALS"]
         with open("credenciais.json", mode="w") as arquivo:
             arquivo.write(GOOGLE_SHEETS_CREDENTIALS)
@@ -101,7 +101,7 @@ def projetos_aprovados():
         planilha = api.open_by_key("1srTpWeSZKLAxMcw_OqhKmzEJxwDPjP7jhvvNGudtx-E") # Substitua pelo ID da sua planilha
         sheet = planilha.worksheet("Página1") # Substitua pelo nome da planilha ou da página que deseja acessar
 
-        # Escrever os dados na planilha
+        #  dados na planilha
         for projeto in projetos_aprovados:
             sheet.append_row([projeto])
 
