@@ -1,13 +1,9 @@
 # Bot Projeto de Lei 
 
-O  bot  'Projeto de Lei' tem como objetivo informar, de maneira atualizada, quais Pls foram aprovados pela Câmara dos Deputados através da API da Câmara. 
-O desenvolvimento do projeto faz parte do projeto final de Algoritmos de Automação do Master em Jornalismo de Dados, Automação e Data Storytelling do Insper.
+O bot "Projeto de Lei" foi criado com o intuito de fornecer informações atualizadas sobre os Projetos de Lei aprovados pela Câmara dos Deputados. O projeto foi desenvolvido como parte do trabalho final do curso de Mestrado em Jornalismo de Dados, Automação e Data Storytelling do Insper, com ênfase na automatização de algoritmos.
 
-O desenvolvimento do projeto faz parte do projeto final de Algoritmos de Automação do Master em Jornalismo de Dados, Automação e Data Storytelling do Insper.
+As funcionalidades do bot baseiam-se em uma dinâmica simples, que envolve o envio e recebimento de mensagens por meio da API do Telegram, utilizando as bibliotecas requests e Flask. As informações coletadas são armazenadas em planilhas do Google Sheets, utilizando a biblioteca gspread. Em seguida, essas informações são enviadas ao site final por meio do Render.
 
-As funcionalidades se baseiam na seguinte dinâmica: envio e recebimento de mensagens através da API da API do Telegram ( biblioteca requests e o método webhook via site Flask),  utilização de planilhas (Google Sheets) para guardar informações, no caso concreto os Projetos de Leis aprovados (biblioteca gspread) e envio dessas informações ao site final, via Render. 
-
-Em suma: o interessado acessa o bot, consulta os Projetos de Lei aprovados em tempo real, podendo também acessar tais projetos pelo site para maiores detalhes e para uma melhor visualização.  
-
+Em resumo, o bot "Projeto de Lei" oferece acesso rápido e fácil aos PLs aprovados pela Câmara dos Deputados em tempo real, permitindo que os usuários visualizem esses projetos por meio do site e obtenham detalhes importantes sobre cada um deles. A automatização dos algoritmos utilizados no projeto permite que as informações sejam atualizadas com rapidez e precisão, garantindo que os usuários obtenham dados precisos e confiáveis.
 
 
