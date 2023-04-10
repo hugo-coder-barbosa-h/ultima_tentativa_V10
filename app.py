@@ -92,6 +92,19 @@ def projetos_aprovados():
             ementa = projeto['ementa']
             projetos_aprovados.append(f"{tipo} {numero} - {ementa}")
             
+        # Autenticação com as credenciais do Google Sheets
+        GOOGLE_SHEETS_CREDENTIALS = os.environ["GOOGLE_SHEETS_CREDENTIALS"]
+        with open("credenciais.json", mode="w") as arquivo:
+            arquivo.write(GOOGLE_SHEETS_CREDENTIALS)
+        conta = ServiceAccountCredentials.from_json_keyfile_name("credenciais.json")
+        api = gspread.authorize(conta)
+        planilha = api.open_by_key("1srTpWeSZKLAxMcw_OqhKmzEJxwDPjP7jhvvNGudtx-E") # Substitua pelo ID da sua planilha
+        sheet = planilha.worksheet("Página1") # Substitua pelo nome da planilha ou da página que deseja acessar
+
+        # Escrever os dados na planilha
+        for projeto in projetos_aprovados:
+            sheet.append_row([projeto])
+
         return projetos_aprovados
     else:
         return f"Erro: {response.status_code}"
